@@ -17,6 +17,7 @@ type AgentState struct {
 	Receipt        *contract.Receipt      `json:"receipt"`
 	Iteration      int                    `json:"iteration"`
 	MaxIterations  int                    `json:"max_iterations"`
+	CurrentNode    string                 `json:"current_node"`
 	RequiresHuman  bool                   `json:"requires_human"`
 	HumanApproved  bool                   `json:"human_approved"`
 	ExecutionEnded bool                   `json:"execution_ended"`
