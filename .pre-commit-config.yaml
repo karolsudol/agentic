@@ -11,15 +11,22 @@ repos:
         args: ['--maxkb=1024']
       - id: detect-private-key
 
-  - repo: https://github.com/dnephin/pre-commit-golang
-    rev: v0.5.1
+  - repo: local
     hooks:
       - id: go-fmt
+        name: go-fmt
+        entry: gofmt -l -w
+        language: system
+        types: [go]
       - id: go-vet
-      - id: go-mod-tidy
-
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v1.60.3
-    hooks:
-      - id: golangci-lint
-        args: ['--timeout=3m']
+        name: go-vet
+        entry: go vet ./...
+        language: system
+        types: [go]
+        pass_filenames: false
+      - id: go-test
+        name: go-test
+        entry: go test -race ./...
+        language: system
+        types: [go]
+        pass_filenames: false

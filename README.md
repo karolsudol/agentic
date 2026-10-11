@@ -1,115 +1,92 @@
-# High-Throughput Agentic Architecture (Go ADK 2.0 + Jev)
+# Agentic: High-Throughput Go Agent Architecture
 
-A production-grade, code-first AI agent architecture built in **Go** following **Google ADK 2.0 principles**, featuring a two-tier cognitive model (**System 2 Frontier Planning + System 1 Jev Typed Decisions**), an evidence-based loop, and a secure execution harness.
+A production-grade AI agent framework implemented in **Go** following **Google ADK 2.0 principles**, featuring a two-tier cognitive model (**System 2 Frontier Planning + System 1 Jev Typed Decisions**), evidence-based loops, and a secure execution harness.
 
 ---
 
-## 1. System Architecture Diagram
+## Architecture Overview
 
-```mermaid
-flowchart TD
-    subgraph ClientLayer ["1. Task Contract & Ingestion"]
-        Req["User Request"] --> Contract["Bounded Task Contract\n• Constraints\n• done_when criteria\n• Approval requirements"]
-        Contract --> Supervisor["Supervisor Node"]
-    end
+This architecture replaces monolithic, prompt-heavy loops with a decoupled three-layer system designed for reliability, type safety, and high-concurrency deployment.
 
-    subgraph HarnessLayer ["2. The Harness (Environment & Safety 'Floor')"]
-        ProjectMap["Project Map\n(Progressive Disclosure Index)"]
-        DurableMemory[("Durable Memory\n• Facts & Invariants\n• Decisions & Rationale\n• Active State\n• Lessons")]
-        PolicyEngine["Policy Engine\n(4-Tier Permission Ladder)"]
-        ToolGateway["Tool Gateway\n• Precondition Validation\n• Authorization Middleware\n• Audit Traces"]
-    end
-
-    subgraph GraphLayer ["3. The ADK 2.0 Graph Topology ('Flow')"]
-        Supervisor -->|"Fleet Fan-Out (Goroutines)"| Workers["Parallel Sub-Task Workers"]
-        Workers --> JoinNode["Fleet Aggregator"]
-        JoinNode --> Builder["Builder Node\n(System 2: Frontier Reasoning)"]
-        
-        Builder -->|"Propose Actions"| ToolGateway
-        ToolGateway --> Builder
-        
-        Builder --> Verifier["Independent Verifier Node\n(Adversarial Disproof)"]
-        Verifier -->|"Deterministic Checks\n(Syntax, Types, Unit Tests)"| EvidenceCollector["Evidence Collector"]
-        
-        EvidenceCollector --> JevRouter{"Jev Router\n(System 1: Calibrated Decisions)"}
-        
-        JevRouter -->|"RETRY_REPAIR (Disproof Found)"| Builder
-        JevRouter -->|"PROCEED_TO_GATE (Evidence Passes)"| HITL["Human-in-the-Loop Gate\n(ADK 2.0 Interrupt)"]
-        JevRouter -->|"HALT_EXHAUSTED (Budget Exceeded)"| ReceiptNode["Receipt Generator"]
-        
-        HITL -->|"Approval Granted"| ExternalAction["External Action\n(Deploy / PR Merge)"]
-        ExternalAction --> ReceiptNode
-    end
-
-    Supervisor -.-> ProjectMap
-    Builder -.-> DurableMemory
-    Verifier -.-> DurableMemory
-    ToolGateway -.-> PolicyEngine
-    ReceiptNode --> Receipt["Verifiable Run Receipt"]
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. THE HARNESS (Environment, Security & Memory Floor)       │
+│    • Bounded Task Contracts with done_when criteria         │
+│    • Progressive Disclosure via Project Map attention index │
+│    • Tool Gateway with 4-Tier Permission Ladder             │
+│    • Structured Durable Memory outside chat transcripts     │
+├─────────────────────────────────────────────────────────────┤
+│ 2. THE GRAPH (Topology & Orchestration Engine)              │
+│    • Google ADK 2.0 StateGraph state machine                │
+│    • Supervisor & Parallel Fleet Workers (Goroutines)       │
+│    • Decoupled Builder vs. Adversarial Verifier             │
+│    • Human-in-the-Loop (HITL) Checkpoint Interrupts         │
+├─────────────────────────────────────────────────────────────┤
+│ 3. THE LOOP (Evidence & Cognitive Engine)                   │
+│    • System 2 (Frontier LLM): Planning & Code Generation    │
+│    • System 1 (Jev / TypeSafe AI): Calibrated Typed Routing │
+│    • Deterministic Evidence Gates (Compilers, Tests, Lints) │
+│    • Verifiable Run Receipts for human operators            │
+└─────────────────────────────────────────────────────────────┘
 ```
 
----
-
-## 2. Core Architectural Principles
-
-### A. The Two-Tier Cognitive Model
-* **System 2 (Frontier Model — e.g. Gemini 2.0 / Astra):** Handles creative reasoning, architectural synthesis, and code generation.
-* **System 1 (Jev — TypeSafe AI):** Handles ultra-fast, low-latency, schema-guaranteed routing, guardrail validation, and disproof scoring with calibrated confidence.
-* **Deterministic Runtime (Go Engine):** Compiles code, runs tests, and checks linters directly.
-
-### B. The Three System Layers
-1. **The Harness ("The Floor"):**
-   * **Task Contracts:** Binds natural language into measurable contracts with explicit `done_when` criteria.
-   * **Progressive Disclosure:** Provides a high-level project map (attention index) rather than bloating the context window with raw files.
-   * **Tool Gateway:** Sits between the model and the environment. Validates preconditions and enforces a 4-tier permission ladder (`LowRisk`, `Reversible`, `ExternalEffect`, `Irreversible`).
-   * **Durable Memory:** Persists structured state (`Facts`, `Decisions`, `State`, `Lessons`) outside of the conversation transcript.
-2. **The Graph ("The Flow"):**
-   * Built on **ADK 2.0 StateGraph** with explicit nodes, conditional edges, and interrupt gates.
-   * Enforces strict **Builder vs. Verifier separation** to prevent self-review bias.
-   * Orchestrates parallel worker fleets using lightweight Go routines.
-3. **The Loop ("The Feedback"):**
-   * **Evidence-Based Gating:** Loop exit requires deterministic proof (exit code 0, test results, syntax checks) rather than model self-confidence.
-   * **Run Receipts:** Compiles execution history into an auditable receipt detailing modified files, verified claims, and remaining risks.
+For complete technical specifications, sequence diagrams, and design rationales, see [Architecture Specification](docs/ARCHITECTURE.md).
 
 ---
 
-## 3. Directory Layout
+## Documentation Index
+
+Explore the documentation guides for in-depth information:
+
+* **[Architecture Specification](docs/ARCHITECTURE.md):** Detailed component topologies, Mermaid flowcharts, layer descriptions, and comparisons with traditional agent architectures.
+* **[Developer Guide](docs/DEVELOPMENT.md):** Local setup, prerequisites, development workflows, and command references.
+* **[Evaluation Framework](docs/EVALS.md):** The evaluation blueprint covering contract adherence, trajectory efficiency, Jev calibration metrics, and test datasets.
+* **[Repository Rules & Guidelines](AGENTS.md):** Invariants and coding standards governing AI assistant interactions.
+* **[Contributing Guide](CONTRIBUTING.md):** PR workflows, conventional commits, and pre-commit hook setup.
+
+---
+
+## Directory Structure
 
 ```
 .
 ├── cmd/
 │   └── agent/
-│       └── main.go              # Complete end-to-end runnable demo
-└── pkg/
-    ├── contract/
-    │   └── contract.go          # TaskContract, Evidence, and Receipt models
-    ├── harness/
-    │   ├── gateway.go           # Tool Gateway with preconditions & audit traces
-    │   ├── permissions.go       # 4-tier Permission Ladder & Policy Engine
-    │   ├── projectmap.go        # Progressive disclosure attention index
-    │   ├── state.go             # Durable memory (Facts, Decisions, Lessons)
-    │   └── tools.go             # Concrete typed tool definitions
-    ├── jev/
-    │   ├── client.go            # Jev client (calibrated System 1 decision engine)
-    │   └── types.go             # Typed routing decisions and verifier scores
-    ├── graph/
-    │   ├── graph.go             # ADK 2.0 StateGraph engine & interrupts
-    │   └── state.go             # Typed AgentState model
-    └── nodes/
-        ├── supervisor.go        # Parallel fleet fan-out
-        ├── builder.go           # Solution generator via ToolGateway
-        ├── verifier.go          # Adversarial disproof verifier
-        ├── router.go            # Jev-driven dynamic conditional edge router
-        ├── human_gate.go        # Human-in-the-loop (HITL) checkpoint
-        └── receipt_node.go      # Final proof-based receipt generator
+│       └── main.go              # End-to-end runnable demonstration
+├── pkg/
+│   ├── contract/                # Task contracts, Evidence, and Receipt models
+│   ├── harness/                 # Tool Gateway, Permission Ladder, ProjectMap, Durable Memory
+│   ├── jev/                     # Jev client (System 1 calibrated decision engine)
+│   ├── graph/                   # ADK 2.0 StateGraph engine & interrupt handling
+│   └── nodes/                   # Supervisor, Builder, Verifier, Router, HumanGate nodes
+├── docs/                        # In-depth architectural & developer documentation
+└── .agents/                     # Local skills and assistant operating guidelines
 ```
 
 ---
 
-## 4. Quickstart
+## Quickstart
 
-Run the complete pipeline:
+### Prerequisites
+* Go 1.27+
+* Make
+* Git
 
+### Running the Demonstration
+Execute the end-to-end multi-agent workflow:
 ```bash
-go run ./cmd/agent/main.go
+make run
+```
+
+### Running Tests
+Run the full test suite with the race detector enabled:
+```bash
+make test
+```
+
+### Formatting & Linting
+```bash
+make fmt
+make vet
+make lint
 ```

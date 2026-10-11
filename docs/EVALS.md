@@ -6,7 +6,7 @@ This document defines the architecture, metrics, and methodology for evaluating 
 
 ## 1. Why Agent Evals are Different
 
-Traditional software testing asserts deterministic outputs: `f(x) == y`. 
+Traditional software testing asserts deterministic outputs: `f(x) == y`.
 Agent evaluation evaluates **stochastic trajectories**:
 1. Did the agent take safe, authorized steps?
 2. Did it inspect the right project areas without blowing its attention budget?
