@@ -16,8 +16,8 @@ func main() {
 	ctx := context.Background()
 
 	fmt.Println("=================================================================")
-	fmt.Println("  STATE-OF-THE-ART AGENT ARCHITECTURE (Go ADK 2.0 + Jev)")
-	fmt.Println("  Harness (Mori) + Loops (Beam) + Graph (ADK v2 & Makarevich)")
+	fmt.Println("  AGENT ARCHITECTURE: Go ADK 2.0 + Jev (TypeSafe AI)")
+	fmt.Println("  Harness Gateway + StateGraph + Evidence-Based Loops")
 	fmt.Println("=================================================================")
 
 	// 1. HARNESS LAYER (Mori Rule 2): Define Bounded Task Contract
