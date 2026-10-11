@@ -8,7 +8,7 @@ import (
 // WorkspaceEditTool allows modifying files in the workspace (Reversible)
 type WorkspaceEditTool struct{}
 
-func (t *WorkspaceEditTool) Name() string { return "workspace_edit" }
+func (t *WorkspaceEditTool) Name() string    { return "workspace_edit" }
 func (t *WorkspaceEditTool) Risk() RiskLevel { return Reversible }
 
 func (t *WorkspaceEditTool) Preconditions(ctx context.Context, input map[string]any) error {
@@ -31,7 +31,7 @@ func (t *WorkspaceEditTool) Execute(ctx context.Context, input map[string]any) (
 // RunTestsTool executes test suites deterministically
 type RunTestsTool struct{}
 
-func (t *RunTestsTool) Name() string { return "run_tests" }
+func (t *RunTestsTool) Name() string    { return "run_tests" }
 func (t *RunTestsTool) Risk() RiskLevel { return LowRisk }
 
 func (t *RunTestsTool) Preconditions(ctx context.Context, input map[string]any) error {
@@ -48,7 +48,7 @@ func (t *RunTestsTool) Execute(ctx context.Context, input map[string]any) (map[s
 // DeployStagingTool requires authorization on the permission ladder
 type DeployStagingTool struct{}
 
-func (t *DeployStagingTool) Name() string { return "deploy_staging" }
+func (t *DeployStagingTool) Name() string    { return "deploy_staging" }
 func (t *DeployStagingTool) Risk() RiskLevel { return ExternalEffect }
 
 func (t *DeployStagingTool) Preconditions(ctx context.Context, input map[string]any) error {

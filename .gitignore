@@ -1,0 +1,33 @@
+# Binaries & build artifacts
+bin/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.out
+
+# Test & coverage artifacts
+*.test
+coverage.txt
+coverage.html
+profile.out
+
+# Evaluation traces & run logs
+eval_runs/
+traces/
+*.log
+
+# OS & Editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment & secrets
+.env
+.env.*
+!.env.example

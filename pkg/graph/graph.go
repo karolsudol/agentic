@@ -61,19 +61,25 @@ func (g *StateGraph) Execute(ctx context.Context, state *AgentState) (*AgentStat
 	}
 
 	currentNode := g.entryPoint
+	if state.CurrentNode != "" {
+		currentNode = state.CurrentNode
+	}
 
 	for {
 		if currentNode == EndNode {
+			state.CurrentNode = EndNode
 			state.ExecutionEnded = true
 			return state, nil
 		}
 
 		// Check for Human-in-the-loop interrupt gate
 		if g.interrupts[currentNode] && !state.HumanApproved {
+			state.CurrentNode = currentNode
 			state.RequiresHuman = true
 			return state, nil // Halts execution to wait for user approval
 		}
 
+		state.CurrentNode = currentNode
 		handler, exists := g.nodes[currentNode]
 		if !exists {
 			return nil, fmt.Errorf("node '%s' not found in graph", currentNode)
