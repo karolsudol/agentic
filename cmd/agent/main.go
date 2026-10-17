@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 
+	"agentic/pkg/config"
 	"agentic/pkg/contract"
+	"agentic/pkg/gemini"
 	"agentic/pkg/graph"
 	"agentic/pkg/harness"
 	"agentic/pkg/jev"
@@ -19,6 +21,9 @@ func main() {
 	fmt.Println("  AGENT ARCHITECTURE: Go ADK 2.0 + Jev (TypeSafe AI)")
 	fmt.Println("  Harness Gateway + StateGraph + Evidence-Based Loops")
 	fmt.Println("=================================================================")
+
+	// 0. CONFIGURATION: Load env-driven settings (.env → environment)
+	cfg := config.Load(".env")
 
 	// 1. HARNESS LAYER (Mori Rule 2): Define Bounded Task Contract
 	taskContract := &contract.TaskContract{
@@ -60,7 +65,15 @@ func main() {
 	gateway.Register(&harness.DeployStagingTool{})
 
 	// 4. SYSTEM 1 DECISION ENGINE: Jev (TypeSafe AI)
-	jevClient := jev.NewLocalJevClient()
+	//    Dual-mode: local (deterministic, zero API cost) or gemini (structured outputs)
+	var jevClient jev.Client
+	if cfg.IsGeminiMode() && cfg.HasGeminiKey() {
+		fmt.Println("[CONFIG]: Jev mode = GEMINI (structured outputs via Gemini API)")
+		jevClient = gemini.NewClient(cfg.GeminiAPIKey, cfg.GeminiModel)
+	} else {
+		fmt.Println("[CONFIG]: Jev mode = LOCAL (deterministic decision engine, zero API cost)")
+		jevClient = jev.NewLocalJevClient()
+	}
 
 	// 5. GRAPH ENGINE: ADK 2.0 StateGraph Assembly
 	builderNode := nodes.NewBuilderNode(gateway)
